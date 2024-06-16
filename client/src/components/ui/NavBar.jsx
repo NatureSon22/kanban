@@ -11,6 +11,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
+import DeleteBoard from "./modals/DeleteBoard";
+import CreateBoard from "./modals/CreateBoard";
 
 const NavBar = ({
   BoardTitle = "Platform Launch",
@@ -56,10 +58,8 @@ const NavBar = ({
               <img src={verticalEllipsis} alt="verticalEllipsis" />
             </PopoverTrigger>
             <PopoverContent className="mr-5 mt-5 grid w-max gap-2 pl-5 pr-8 text-left shadow-lg md:mr-10 md:mt-7">
-              <button className="text-left text-primary-gray">
-                Edit Board
-              </button>
-              <button className="text-red-500">Delete Board</button>
+              <CreateBoard state={"EDIT"}></CreateBoard>
+              <DeleteBoard></DeleteBoard>
             </PopoverContent>
           </Popover>
         </div>

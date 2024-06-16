@@ -1,6 +1,6 @@
 import CreateBoard from "../../components/ui/modals/CreateBoard";
 import { iconBoard } from "@/utils/imports";
-import { faAdd, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
@@ -26,7 +26,7 @@ const SideBar = () => {
 
   return (
     <div
-      className={`absolute left-0 top-0 z-10 grid h-full w-full justify-items-center bg-black/75 transition-transform duration-200 mg:flex mg:h-auto mg:w-[20em] mg:justify-stretch ${
+      className={`absolute left-0 top-0 z-10 grid h-full w-full justify-items-center bg-black/75 transition-transform duration-500 mg:flex mg:h-auto mg:w-[20em] mg:justify-stretch ${
         openSideBar
           ? "translate-x-0 mg:relative mg:flex"
           : "absolute -translate-x-full mg:h-full"
@@ -52,11 +52,11 @@ const SideBar = () => {
             </button>
           ))}
 
-          <CreateBoard></CreateBoard>
+          <CreateBoard state={"ADD"}></CreateBoard>
         </div>
 
         <button
-          className={`z-10 mt-auto hidden items-center gap-5 rounded-r-full py-4 pr-20 transition-all duration-300 hover:bg-primary-violet/10 sm:pl-12 mg:flex ${
+          className={`z-10 mt-auto hidden items-center gap-5 rounded-r-full py-4 pr-20 transition-all duration-500 hover:bg-primary-violet/10 sm:pl-12 mg:flex ${
             !openSideBar
               ? "absolute bottom-12 right-0 translate-x-full bg-primary-violet pl-0 pr-5 text-white shadow-md sm:pl-5"
               : "pl-0"

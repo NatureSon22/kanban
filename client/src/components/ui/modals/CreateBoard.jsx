@@ -28,26 +28,43 @@ const defaultColumns = [
   },
 ];
 
-const CreateBoard = ({ columns }) => {
+const CreateBoard = ({ columns, state }) => {
   const [boardColumns, setboardColumns] = useState(columns || defaultColumns);
+  const [openAddColumn, setOpenAddColumn] = useState(false);
+
+  const handleAddColumn = () => {
+    setOpenAddColumn(!openAddColumn);
+  };
 
   return (
     <Dialog>
       <DialogTrigger
         asChild
-        className="flex w-full cursor-pointer items-center gap-5 rounded-r-full py-4 pl-8 hover:bg-primary-gray/10 sm:pl-12"
+        className={
+          state === "ADD"
+            ? "flex w-full cursor-pointer items-center gap-5 rounded-r-full py-4 pl-8 hover:bg-primary-gray/10 sm:pl-12"
+            : "cursor-pointer"
+        }
       >
-        <div>
-          <FontAwesomeIcon icon={faAdd}></FontAwesomeIcon>
+        {state === "ADD" ? (
           <div>
-            <p className="font-bold text-primary-violet">Create New Board</p>
+            <FontAwesomeIcon icon={faAdd}></FontAwesomeIcon>
+            <div>
+              <p className="font-bold text-primary-violet">Create New Board</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            <p>Edit Board</p>
+          </div>
+        )}
       </DialogTrigger>
 
       <DialogContent className="grid w-[80%] gap-10 sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="font-bold">Add New Board</DialogTitle>
+          <DialogTitle className="font-bold">
+            {state === "ADD" ? "Add New Board" : "Edit Board"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -61,6 +78,7 @@ const CreateBoard = ({ columns }) => {
             <Input
               id="board-name"
               className="rounded-sm focus-visible:ring-primary-violet"
+              autoFocus
             />
           </div>
 
@@ -82,9 +100,20 @@ const CreateBoard = ({ columns }) => {
                   />
                 </div>
               ))}
+              {openAddColumn && (
+                <div>
+                  <Input
+                    className="rounded-sm focus-visible:ring-primary-violet"
+                    autoFocus
+                  />
+                </div>
+              )}
             </div>
 
-            <Button className="ml-auto flex items-center justify-center gap-2 bg-primary-violet hover:bg-primary-violet/80">
+            <Button
+              className="ml-auto flex items-center justify-center gap-2 bg-primary-violet hover:bg-primary-violet/80"
+              onClick={handleAddColumn}
+            >
               <FontAwesomeIcon
                 className="text-sm"
                 icon={faAdd}
@@ -96,7 +125,9 @@ const CreateBoard = ({ columns }) => {
 
         <DialogFooter className="px-2 sm:justify-stretch">
           <Button className="w-full bg-primary-violet hover:bg-primary-violet/80">
-            <p className="font-bold">Create New Board</p>
+            <p className="font-bold">
+              {state === "ADD" ? "Create New Board" : "Save Changes"}
+            </p>
           </Button>
         </DialogFooter>
       </DialogContent>
