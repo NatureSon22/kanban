@@ -3,7 +3,8 @@ import ColumnModel from "../model/columnSchema.js";
 
 const getAllBoards = async (req, res) => {
   try {
-    const boards = await BoardModel.find();
+    const { userId } = req.params;
+    const boards = await BoardModel.find({ user_id: userId });
     res.status(200).json(boards);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -22,10 +23,9 @@ const getBoardById = async (req, res) => {
 
 const createBoard = async (req, res) => {
   try {
-    const { title, columns } = req.body; // the columns will be [ { board_id, status, tasks (which will be empty initially) } ]
-
+    const { userId, title, columns } = req.body;
     //Create board first
-    const board = await BoardModel({ title });
+    const board = await BoardModel({ user_id: userId, title });
     board.save();
 
     //Create columns
