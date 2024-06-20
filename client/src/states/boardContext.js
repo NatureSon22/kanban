@@ -26,6 +26,36 @@ const useBoardContext = create((set) => ({
       console.log(error.message);
     }
   },
+  updateBoard: async (id, title) => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/board/${id}`,
+        { title },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      set((state) => ({
+        boards: state.boards.map((board) =>
+          board._id == id ? res.data : board,
+        ),
+      }));
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  deleteBoard: async (id) => {
+    try {
+      await axios.delete(`${API_URL}/board/${id}`);
+      set((state) => ({
+        boards: state.boards.filter((board) => board._id !== id),
+      }));
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
 }));
 
 export default useBoardContext;

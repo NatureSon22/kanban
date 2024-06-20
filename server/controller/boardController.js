@@ -24,11 +24,11 @@ const getBoardById = async (req, res) => {
 const createBoard = async (req, res) => {
   try {
     const { userId, title, columns } = req.body;
-    //Create board first
+    // Create board first
     const board = await BoardModel({ user_id: userId, title });
-    board.save();
+    await board.save();
 
-    //Create columns
+    // Create columns
     const columnsDocs = await Promise.all(
       columns.map(async (column) => {
         const newColumn = new ColumnModel({
@@ -48,4 +48,57 @@ const createBoard = async (req, res) => {
   }
 };
 
-export { createBoard, getAllBoards, getBoardById };
+const updateBoard = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title } = req.body;
+
+    const board = await BoardModel.findByIdAndUpdate(
+      id,
+      { title },
+      { new: true }
+    );
+    res.status(200).json(board);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteBoard = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const board = await BoardModel.findByIdAndDelete(id);
+    res.status(200).json(board);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const addColumn = async (req, res) => {
+  try {
+    const { boardId, status } = req.body;
+
+    const newColumn = new ColumnModel({
+      board_id: boardId,
+      status,
+    });
+
+    await newColumn.save();
+
+    const board = await BoardModel.findById(boardId);
+    board.columns.push(newColumn._id);
+    await board.save();
+
+    res.status(201).json(newColumn);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export {
+  createBoard,
+  getAllBoards,
+  getBoardById,
+  updateBoard,
+  deleteBoard,
+};
