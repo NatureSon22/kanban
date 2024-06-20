@@ -1,7 +1,6 @@
 import {
   iconAddTask,
   iconArrowDown,
-  iconShowSideBar,
   logoLigth,
   verticalEllipsis,
 } from "@/utils/imports";
@@ -12,15 +11,21 @@ import {
 } from "@/components/ui/popover";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import DeleteBoard from "./modals/DeleteBoard";
-import CreateBoard from "./modals/CreateBoard";
+import BoardFormModal from "./modals/BoardFormModal";
+import useChosenBoard from "@/states/chosenBoardContext";
+import { useState } from "react";
+import TaskFormModal from "./modals/TaskFormModal";
 
-const NavBar = ({
-  BoardTitle = "Platform Launch",
-  setOpenSidBar,
-  openSideBar,
-}) => {
+const NavBar = ({ setOpenSidBar, openSideBar }) => {
+  const { chosenBoard, columns } = useChosenBoard();
+  const [openPopover, setOpenPopover] = useState(false);
+
   const handleSetOpenSidBar = () => {
     setOpenSidBar((prev) => !prev);
+  };
+
+  const handleClosePopover = () => {
+    setOpenPopover(false);
   };
 
   return (
@@ -33,10 +38,10 @@ const NavBar = ({
       </div>
 
       <SignedIn>
-        {BoardTitle && (
+        {chosenBoard && (
           <div className="mr-auto flex cursor-pointer items-center gap-3 md:gap-4">
             <p className="text-xl font-bold sm:ml-[5em] mg:ml-[9.5em]">
-              {BoardTitle}
+              {chosenBoard.title}
             </p>
             <img
               className={`transition-transform duration-200 mg:hidden ${openSideBar ? "-rotate-180" : ""}`}
@@ -47,19 +52,24 @@ const NavBar = ({
           </div>
         )}
         <div className="flex items-center gap-5">
-          <UserButton></UserButton>
-
-          <button className="absolute bottom-12 right-10 z-10 flex cursor-pointer items-center gap-4 rounded-full bg-primary-violet px-7 py-3 text-white shadow-xl transition-all duration-200 hover:opacity-50">
-            <img src={iconAddTask} alt="icon add task" />
-            <p className="hidden font-bold md:block">Add New Task</p>
-          </button>
-          <Popover>
+          <UserButton />
+          <TaskFormModal state={"ADD"} ></TaskFormModal>
+          <Popover open={openPopover} onOpenChange={setOpenPopover}>
             <PopoverTrigger>
               <img src={verticalEllipsis} alt="verticalEllipsis" />
             </PopoverTrigger>
             <PopoverContent className="mr-5 mt-5 grid w-max gap-2 pl-5 pr-8 text-left shadow-lg md:mr-10 md:mt-7">
-              <CreateBoard state={"EDIT"}></CreateBoard>
-              <DeleteBoard></DeleteBoard>
+              <BoardFormModal
+                id={chosenBoard?._id}
+                title={chosenBoard?.title}
+                state="EDIT"
+                columns={columns}
+                handleClosePopover={handleClosePopover}
+              />
+              <DeleteBoard
+                handleClosePopover={handleClosePopover}
+                id={chosenBoard?._id}
+              />
             </PopoverContent>
           </Popover>
         </div>
