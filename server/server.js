@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/board", boardRouter);
 app.use("/board/column", columnRouter);
+app.use("/board/column/task", columnRouter);
 
 (async () => {
   try {

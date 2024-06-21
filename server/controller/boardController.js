@@ -95,10 +95,4 @@ const addColumn = async (req, res) => {
   }
 };
 
-export {
-  createBoard,
-  getAllBoards,
-  getBoardById,
-  updateBoard,
-  deleteBoard,
-};
+export { createBoard, getAllBoards, getBoardById, updateBoard, deleteBoard };

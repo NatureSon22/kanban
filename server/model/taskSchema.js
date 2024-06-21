@@ -7,7 +7,7 @@ const taskSchema = new mongoose.Schema({
     ref: MODEL_NAMES.COLUMN,
     required: true,
   },
-  title: {
+  task: {
     type: String,
     required: true,
   },
