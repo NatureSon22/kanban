@@ -6,28 +6,33 @@ import { useEffect, useState } from "react";
 
 const API_URL = "http://localhost:3000/board/column/task";
 
-const BoardTile = ({ _id, status }) => {
+const BoardTile = ({ _id, status, tasks: tiletasks }) => {
   const [tileTasks, setTileTasks] = useState([]);
   const { tasks } = useColumnTaskContext();
   const { setTask } = useTaskContext();
+
+  // useEffect(() => {
+  //   console.log(tileTasks);
+  // }, [tileTasks.length]);
 
   useEffect(() => {
     const getTask = async () => {
       try {
         const res = await axios.get(`${API_URL}/${_id}`);
         setTileTasks(res.data);
+        console.log(res.data);
       } catch (error) {
         console.log(error.message);
       }
     };
-
+    console.log(tasks);
     getTask();
-  }, [tasks.length, _id]);
+  }, [tasks, _id]);
 
   const getTaskCompleted = (subtasks) => {
     return subtasks.reduce(
       (acc, subtask) => acc + (subtask.completed ? 1 : 0),
-      0
+      0,
     );
   };
 
@@ -49,9 +54,9 @@ const BoardTile = ({ _id, status }) => {
         {tileTasks.map((task) => (
           <TaskModal
             key={task._id}
-            title={task.task}
             subtasks={task.subtasks}
-            description={`(${getTaskCompleted(task.subtasks)} of ${task.subtasks.length}) subtasks completed`}
+            status={status}
+            description={task.description}
           >
             <div
               className="group cursor-pointer space-y-1 rounded-md bg-white px-5 py-6 shadow-custom-200"
@@ -61,7 +66,8 @@ const BoardTile = ({ _id, status }) => {
                 {task.task}
               </p>
               <p className="text-[0.8rem] font-bold text-primary-gray">
-                {getTaskCompleted(task.subtasks)} of {task.subtasks.length} subtasks
+                {getTaskCompleted(task.subtasks)} of {task.subtasks.length}{" "}
+                subtasks
               </p>
             </div>
           </TaskModal>
