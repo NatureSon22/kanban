@@ -1,9 +1,4 @@
-import {
-  iconAddTask,
-  iconArrowDown,
-  logoLigth,
-  verticalEllipsis,
-} from "@/utils/imports";
+import { iconArrowDown, logoLigth, verticalEllipsis } from "@/utils/imports";
 import {
   Popover,
   PopoverContent,
@@ -16,12 +11,12 @@ import useChosenBoard from "@/states/chosenBoardContext";
 import { useState } from "react";
 import TaskFormModal from "./modals/TaskFormModal";
 
-const NavBar = ({ setOpenSidBar, openSideBar }) => {
+const NavBar = ({ setOpenSideBar, openSideBar }) => {
   const { chosenBoard, columns } = useChosenBoard();
   const [openPopover, setOpenPopover] = useState(false);
 
   const handleSetOpenSidBar = () => {
-    setOpenSidBar((prev) => !prev);
+    setOpenSideBar((prev) => !prev);
   };
 
   const handleClosePopover = () => {
@@ -53,7 +48,7 @@ const NavBar = ({ setOpenSidBar, openSideBar }) => {
         )}
         <div className="flex items-center gap-5">
           <UserButton />
-          <TaskFormModal state={"ADD"} ></TaskFormModal>
+          <TaskFormModal state={"ADD"}></TaskFormModal>
           <Popover open={openPopover} onOpenChange={setOpenPopover}>
             <PopoverTrigger>
               <img src={verticalEllipsis} alt="verticalEllipsis" />

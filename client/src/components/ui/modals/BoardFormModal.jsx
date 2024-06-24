@@ -14,8 +14,8 @@ import useChosenBoard from "@/states/chosenBoardContext";
 import { useUser } from "@clerk/clerk-react";
 import { faAdd, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { DialogClose, DialogDescription } from "@radix-ui/react-dialog";
+import { useEffect, useState } from "react";
 
 const defaultColumns = [
   {
@@ -29,17 +29,24 @@ const defaultColumns = [
 ];
 
 const BoardFormModal = ({ title, columns, state, id, handleClosePopover }) => {
-  const [boardName, setBoardName] = useState(title || "");
-  const [newColumnName, setNewColumnName] = useState("");
-  const [boardColumns, setBoardColumns] = useState(
-    state === "ADD" ? defaultColumns : columns,
-  );
-  const [openAddColumn, setOpenAddColumn] = useState(false);
-  const [isEmptyName, setIsEmptyName] = useState(false);
-  const [deleteCol, setDeleteColumn] = useState([]);
   const { addBoard, updateBoard } = useBoardContext();
   const { addColumn, updateColumn, deleteColumn } = useChosenBoard();
   const { user } = useUser();
+  const [boardName, setBoardName] = useState("");
+  const [newColumnName, setNewColumnName] = useState("");
+  const [boardColumns, setBoardColumns] = useState([]);
+  const [openAddColumn, setOpenAddColumn] = useState(false);
+  const [isEmptyName, setIsEmptyName] = useState(false);
+  const [deleteCol, setDeleteColumn] = useState([]);
+
+  useEffect(() => {
+    if (columns?.length > 0) {
+      setBoardName(title || "");
+      setBoardColumns((prev) =>
+        state === "ADD" && prev.length === 0 ? defaultColumns : columns,
+      );
+    }
+  }, [columns, title, state]);
 
   const handleInput = (val) => {
     setNewColumnName(val);
@@ -107,11 +114,14 @@ const BoardFormModal = ({ title, columns, state, id, handleClosePopover }) => {
       );
 
       if (deleteCol.length > 0) {
-        await Promise.all(
-          deleteCol.map(async (column) => {
-            await deleteColumn(column._id);
-          }),
-        );
+        deleteCol.map(async (column) => {
+          await deleteColumn(column._id);
+        });
+        // await Promise.all(
+        //   deleteCol.map(async (column) => {
+        //     await deleteColumn(column._id);
+        //   }),
+        // );
       }
     } catch (error) {
       console.error(error);
@@ -122,7 +132,10 @@ const BoardFormModal = ({ title, columns, state, id, handleClosePopover }) => {
     if (boardColumns.length === 1) return;
     setBoardColumns((prev) =>
       prev.filter((prevBoard) => {
-        if (state === "EDIT" && prevBoard._id === id) {
+        if (
+          (state === "EDIT" || state === "ADD COLUMN") &&
+          prevBoard._id === id
+        ) {
           setDeleteColumn((prev) => [...prev, prevBoard]);
         }
         return prevBoard._id !== id;
@@ -137,8 +150,9 @@ const BoardFormModal = ({ title, columns, state, id, handleClosePopover }) => {
       .join(" ");
 
     updateBoard(id, newTitle);
+
     handleUpdateColumn();
-    handleClosePopover();
+    if (state === "EDIT") handleClosePopover();
     setBoardColumns([]);
   };
 
@@ -157,9 +171,16 @@ const BoardFormModal = ({ title, columns, state, id, handleClosePopover }) => {
             <FontAwesomeIcon icon={faAdd} />
             <p className="font-bold text-primary-violet">Create New Board</p>
           </div>
-        ) : (
+        ) : state === "EDIT" ? (
           <div>
             <p className="text-primary-gray">Edit Board</p>
+          </div>
+        ) : (
+          <div className="mt-9 grid min-w-[290px] cursor-pointer place-items-center rounded-md bg-primary-gray/10">
+            <div className="flex items-center gap-3 text-primary-gray">
+              <FontAwesomeIcon icon={faAdd} className="font-bold" />
+              <p className="text-[1.3rem] font-bold">New Column</p>
+            </div>
           </div>
         )}
       </DialogTrigger>
@@ -169,6 +190,7 @@ const BoardFormModal = ({ title, columns, state, id, handleClosePopover }) => {
           <DialogTitle className="font-bold">
             {state === "ADD" ? "Add New Board" : "Edit Board"}
           </DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">

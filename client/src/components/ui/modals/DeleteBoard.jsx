@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import useBoardContext from "@/states/boardContext";
 import useChosenBoard from "@/states/chosenBoardContext";
-import { DialogClose } from "@radix-ui/react-dialog";
+import { DialogClose, DialogDescription } from "@radix-ui/react-dialog";
 
 const DeleteBoard = ({ id, handleClosePopover }) => {
   const { deleteBoard } = useBoardContext();
@@ -31,6 +31,7 @@ const DeleteBoard = ({ id, handleClosePopover }) => {
           <DialogTitle className="px-2 font-bold text-red-500">
             Delete this board?
           </DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
 
         <div>

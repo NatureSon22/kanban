@@ -1,32 +1,17 @@
-import { useUser } from "@clerk/clerk-react";
 import BoardFormModal from "../../components/ui/modals/BoardFormModal";
 import { iconBoard } from "@/utils/imports";
 import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
 import useBoardContext from "@/states/boardContext";
 import useChosenBoard from "@/states/chosenBoardContext";
+import { useState } from "react";
 
-const SideBar = () => {
-  const [openBoard, setOpenBoard] = useState(null);
+const SideBar = ({ board }) => {
+  const [openBoard, setOpenBoard] = useState(board);
   const [openSideBar, setOpenSideBar] = useState(true);
-  const { getAllBoards, boards } = useBoardContext();
+  const { boards } = useBoardContext();
   const { setChosenBoard } = useChosenBoard();
-  const { user } = useUser();
   const { getAllColumns } = useChosenBoard();
-
-  useEffect(() => {
-    const handleGetAllBoards = async () => {
-      if (user?.id) {
-        await getAllBoards(user.id);
-        setOpenBoard(boards[0]);
-        setChosenBoard(boards[0]);
-        getAllColumns(boards[0]?._id);
-      }
-    };
-
-    handleGetAllBoards();
-  }, [user, boards.length]);
 
   const handleSetBoard = (board) => {
     setOpenBoard(board);
