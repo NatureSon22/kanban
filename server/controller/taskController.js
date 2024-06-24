@@ -1,5 +1,6 @@
-import TaskModel from "../model/taskSchema";
-import SubtaskModel from "../model/subtaskSchema";
+import TaskModel from "../model/taskSchema.js";
+import SubtaskModel from "../model/subtaskSchema.js";
+import ColumnModel from "../model/columnSchema.js";
 
 const getTasks = async (req, res) => {
   try {
@@ -14,9 +15,14 @@ const getTasks = async (req, res) => {
 const addTask = async (req, res) => {
   try {
     const { column_id } = req.params;
-    const { title, description, subtasks } = req.body;
+    const { task, description, subtasks } = req.body;
 
-    const newTask = new TaskModel({ column_id, title, description });
+    const column = await ColumnModel.findById(column_id);
+    if (!column) {
+      return res.status(404).json({ message: "Column not found" });
+    }
+
+    const newTask = new TaskModel({ column_id, task, description });
     await newTask.save();
 
     const subTasks = await Promise.all(
@@ -32,8 +38,10 @@ const addTask = async (req, res) => {
       })
     );
 
-    newTask.subtasks = subTasks;
+    if (subtasks.length > 0) newTask.subtasks = subTasks;
     await newTask.save();
+    column.tasks.push(newTask._id);
+    await column.save();
     res.status(201).json(newTask);
   } catch (error) {
     res.status(500).json({ message: error.message });

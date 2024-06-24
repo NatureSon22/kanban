@@ -6,10 +6,13 @@ const API_URL = "http://localhost:3000/board/column";
 const useChosenBoard = create((set) => ({
   chosenBoard: {},
   columns: [],
-  setChosenBoard: (board) => set({ chosenBoard: board }),
+  setChosenBoard: (board) => {
+    set({ chosenBoard: board });
+  },
   getAllColumns: async (board_id) => {
     try {
       const res = await axios.get(`${API_URL}/${board_id}`);
+
       set((prev) => {
         const newState = { ...prev, columns: res.data };
         return newState;

@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import boardRouter from "./routes/boardRoutes.js";
 import columnRouter from "./routes/columnRoutes.js";
+import taskRouter from "./routes/taskRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/board", boardRouter);
 app.use("/board/column", columnRouter);
-app.use("/board/column/task", columnRouter);
+app.use("/board/column/task", taskRouter);
 
 (async () => {
   try {

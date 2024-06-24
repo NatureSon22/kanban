@@ -39,7 +39,7 @@ const useBoardContext = create((set) => ({
       );
       set((state) => ({
         boards: state.boards.map((board) =>
-          board._id == id ? res.data : board,
+          board._id === id ? res.data : board,
         ),
       }));
     } catch (error) {

@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import MODEL_NAMES from "./modelConstants";
+import mongoose, { Schema } from "mongoose";
+import MODEL_NAMES from "./modelConstants.js";
 
 const taskSchema = new mongoose.Schema({
   column_id: {
