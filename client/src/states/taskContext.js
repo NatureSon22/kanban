@@ -13,6 +13,22 @@ const useTaskContext = create((set) => ({
       console.log(error.message);
     }
   },
+  updateTask: async (id, column_id) => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/${id}`,
+        { column_id },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      set({ task: res.data });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
 }));
 
 export default useTaskContext;

@@ -71,7 +71,7 @@ const deleteTask = async (req, res) => {
 
     await task.remove();
 
-    res.status(200).json(task);
+    res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -80,24 +80,34 @@ const deleteTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { column_id, description } = req.body;
-    const updateTask = await TaskModel.findByIdAndUpdate(
-      id,
-      { column_id, description },
-      { new: true }
-    ).populate("subtasks");
+    const { column_id, subtasks } = req.body;
 
-    const task = await TaskModel.findById(id);
-
-    if (!task) {
-      return res.status(404).json({ message: "[Task] Task not found" });
-    }
-    
-    if (!updateTask) {
+    const taskToUpdate = await TaskModel.findById(id);
+    if (!taskToUpdate) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    res.status(200).json(updateTask);
+    taskToUpdate.column_id = column_id;
+
+    await SubtaskModel.deleteMany({ task_id: id });
+
+    const subTasks = await Promise.all(
+      subtasks.map(async (subtask) => {
+        const newSubtask = new SubtaskModel({
+          task_id: id,
+          title: subtask.title,
+          completed: subtask.completed || false,
+        });
+        await newSubtask.save();
+        return newSubtask._id;
+      })
+    );
+
+    taskToUpdate.subtasks = subTasks;
+
+    await taskToUpdate.save();
+
+    res.status(200).json(taskToUpdate);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
