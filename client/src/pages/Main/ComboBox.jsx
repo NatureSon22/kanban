@@ -7,9 +7,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import useChosenBoard from "@/states/chosenBoardContext";
 
-const ComboBox = ({ setCurrentStatus }) => {
+const ComboBox = ({ setCurrentStatus, status }) => {
   const [open, setOpen] = useState(false);
-  const [selectedColumn, setSelectedColumn] = useState("");
+  const [selectedColumn, setSelectedColumn] = useState(status || "");
   const { columns } = useChosenBoard();
 
   const handleSetCurrentStatus = (column) => {

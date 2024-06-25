@@ -9,19 +9,29 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
-import { Input } from "../input";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { verticalEllipsis } from "@/utils/imports";
 import DeleteTask from "./DeleteTaskModal";
 import { Button } from "../button";
+import ComboBox from "@/pages/Main/ComboBox";
+import useColumnTaskContext from "@/states/columnTaskContext";
 
-const TaskModal = ({ children, subtasks, status, description }) => {
+const TaskModal = ({
+  children,
+  subtasks,
+  status,
+  description,
+  column_id,
+  task_id,
+}) => {
   const [subTasks, setSubTasks] = useState(subtasks || []);
   const [completedTasksCount, setCompletedTasksCount] = useState(
     subtasks?.filter((task) => task.completed).length || 0,
   );
   const [openPopover, setOpenPopover] = useState(false);
   const [openTaskDialog, setOpenTaskDialog] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState({ _id: column_id });
+  const { updateTask } = useColumnTaskContext();
 
   const handleSetTaskCompleted = (id) => {
     setSubTasks((prev) =>
@@ -36,6 +46,10 @@ const TaskModal = ({ children, subtasks, status, description }) => {
         return task;
       }),
     );
+  };
+
+  const handleUpdate = () => {
+    updateTask(task_id, currentStatus._id, subTasks);
   };
 
   return (
@@ -102,17 +116,20 @@ const TaskModal = ({ children, subtasks, status, description }) => {
           <label className="text-[0.9rem] font-semibold text-primary-gray">
             Current Status
           </label>
-          <Input className="pointer-events-none" defaultValue={status}></Input>
+          <ComboBox
+            setCurrentStatus={setCurrentStatus}
+            status={status}
+          ></ComboBox>
         </div>
         <DialogFooter>
-          <Button className="mt-2 w-full rounded-s-md bg-primary-violet text-white hover:bg-primary-violet/80">
-            <p className="cursor-pointer font-bold">Update</p>
-          </Button>
-          {/* <DialogClose asChild>
-            <Button className="mt-2 w-full rounded-full bg-primary-violet/15 text-primary-violet hover:bg-primary-violet/5">
-              <p className="cursor-pointer font-bold">Cancel</p>
+          <DialogClose asChild>
+            <Button
+              className="mt-2 w-full rounded-s-md bg-primary-violet text-white hover:bg-primary-violet/80"
+              onClick={handleUpdate}
+            >
+              <p className="cursor-pointer font-bold">Update</p>
             </Button>
-          </DialogClose> */}
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

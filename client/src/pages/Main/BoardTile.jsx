@@ -11,21 +11,16 @@ const BoardTile = ({ _id, status, tasks: tiletasks }) => {
   const { tasks } = useColumnTaskContext();
   const { setTask } = useTaskContext();
 
-  // useEffect(() => {
-  //   console.log(tileTasks);
-  // }, [tileTasks.length]);
-
   useEffect(() => {
     const getTask = async () => {
       try {
         const res = await axios.get(`${API_URL}/${_id}`);
         setTileTasks(res.data);
-        console.log(res.data);
       } catch (error) {
         console.log(error.message);
       }
     };
-    console.log(tasks);
+
     getTask();
   }, [tasks, _id]);
 
@@ -56,6 +51,8 @@ const BoardTile = ({ _id, status, tasks: tiletasks }) => {
             key={task._id}
             subtasks={task.subtasks}
             status={status}
+            column_id={_id}
+            task_id={task._id}
             description={task.description}
           >
             <div
